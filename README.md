@@ -1,51 +1,61 @@
-## Requirements
+# goit-pythonweb-hw-10 — Contacts REST API (FastAPI + PostgreSQL + JWT)
 
-Contact fields: first_name, last_name, email, phone, birthday, extra_data (optional).  
-API: CRUD (create/list/get/update/delete), search by query params (first_name/last_name/email), birthdays next N days (default 7).  
-Swagger available at `/docs`.
+API: contacts CRUD + search + birthdays (next 7 days), JWT auth, email verification (Mailtrap), only-own contacts, rate limit (/api/users/me 5/min), avatar upload (Cloudinary), CORS.  
+Swagger: http://127.0.0.1:8000/docs
 
-## Run PostgreSQL (Docker) — macOS / Windows
+## Run
 
-docker run --name goit-postgres-hw10 -p 5432:5432 -e POSTGRES_PASSWORD=mysecretpassword -d postgres
+docker compose up --build -d
 
-## Setup (venv + install)
-
-macOS / Linux:
-python3 -m venv .venv
-source .venv/bin/activate
-
-Windows (CMD / PowerShell):
-python -m venv .venv
-.venv\Scripts\activate
-
-Then (both OS):
-pip install --upgrade pip
-pip install -r requirements.txt
-
-## Environment (.env in project root)
+## .env
 
 DB_USER=postgres
 DB_PASSWORD=mysecretpassword
-DB_HOST=localhost
+DB_HOST=db
 DB_PORT=5432
 DB_NAME=postgres
 
-## Alembic migrations (IMPORTANT: always run via python -m)
+JWT_SECRET_KEY=your_secret
+JWT_ALGORITHM=HS256
+JWT_ACCESS_TOKEN_EXPIRES_MINUTES=30
 
-python -m alembic init migrations
-python -m alembic revision --autogenerate -m "create contacts table"
-python -m alembic upgrade head
+SMTP_HOST=sandbox.smtp.mailtrap.io
+SMTP_PORT=587
+SMTP_USER=your_user
+SMTP_PASSWORD=your_password
+MAIL_FROM=noreply@example.com
+APP_BASE_URL=http://localhost:8000
 
-## Run API (macOS / Windows)
+ME_RATE_LIMIT=5/minute
 
-uvicorn app.main:app --reload
+CLOUDINARY_CLOUD_NAME=your_cloud
+CLOUDINARY_API_KEY=your_key
+CLOUDINARY_API_SECRET=your_secret
 
-## Swagger + Endpoints
+CORS_ORIGINS=http://localhost:3000
 
-Swagger: http://127.0.0.1:8000/docs
-POST /api/contacts
-GET /api/contacts?first_name=&last_name=&email=
+## Migrations
+
+docker compose exec api python -m alembic upgrade head
+
+## Endpoints
+
+POST /api/auth/signup (201/409)
+POST /api/auth/login (username=email, password)
+GET /api/auth/verify?token=...
+
+GET /api/users/me (5/min)
+PATCH /api/users/avatar
+
+POST /api/contacts (201)
+GET /api/contacts
 GET /api/contacts/{id}
 PUT /api/contacts/{id}
 DELETE /api/contacts/{id}
 GET /api/contacts/birthdays?days=7
+
+## Notes
+
+Authorization: Bearer <access_token>
+Passwords hashed (bcrypt)
+Email must be verified
