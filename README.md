@@ -1,5 +1,3 @@
-# goit-pythonweb-hw-08 — Contacts REST API (FastAPI + PostgreSQL + SQLAlchemy + Alembic)
-
 ## Requirements
 
 Contact fields: first_name, last_name, email, phone, birthday, extra_data (optional).  
@@ -8,7 +6,7 @@ Swagger available at `/docs`.
 
 ## Run PostgreSQL (Docker) — macOS / Windows
 
-docker run --name goit-postgres-hw08 -p 5432:5432 -e POSTGRES_PASSWORD=mysecretpassword -d postgres
+docker run --name goit-postgres-hw10 -p 5432:5432 -e POSTGRES_PASSWORD=mysecretpassword -d postgres
 
 ## Setup (venv + install)
 
